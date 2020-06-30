@@ -29,6 +29,14 @@
                     ]
                 },
                 {
+                    "name": "LivingDurationIntent",
+                    "samples": [
+                        "how long",
+                        "how long have we lived here",
+                        "length of time we've lived here"
+                    ]
+                },
+                {
                     "name": "AMAZON.NavigateHomeIntent",
                     "samples": []
                 }

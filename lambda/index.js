@@ -2,6 +2,7 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require("ask-sdk-core");
+const moveInDate = new Date("July 15, 2020 09:00:00");
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -38,6 +39,27 @@ const HelloWorldIntentHandler = {
         );
     },
 };
+
+const LivingDurationIntentHandler = {
+    canHandle(handlerInput) {
+        return (
+            Alexa.getRequestType(handlerInput.requestEnvelope) ===
+                "IntentRequest" &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) ===
+                "LivingDurationIntent"
+        );
+    },
+    handle(handlerInput) {
+        const speakOutput = `Hello World! ${moveInDate}`;
+        return (
+            handlerInput.responseBuilder
+                .speak(speakOutput)
+                //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+                .getResponse()
+        );
+    },
+};
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return (
@@ -134,6 +156,7 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
         HelloWorldIntentHandler,
+        LivingDurationIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
