@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "hello world",
+            "invocationName": "vitagraph",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
@@ -36,5 +36,4 @@
             "types": []
         }
     }
-  }
-  
+}
