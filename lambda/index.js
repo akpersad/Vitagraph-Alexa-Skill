@@ -2,6 +2,7 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require("ask-sdk-core");
+const moveInDate = new Date("July 15, 2020 09:00:00");
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -38,6 +39,104 @@ const HelloWorldIntentHandler = {
         );
     },
 };
+
+const determineLeapYear = (whichYear) => {
+    if (whichYear % 4 !== 0) {
+        return (isLeapYear = false);
+    } else if (whichYear % 100 !== 0) {
+        return (isLeapYear = true);
+    } else if (whichYear % 400 !== 0) {
+        return (isLeapYear = false);
+    } else {
+        return (isLeapYear = true);
+    }
+};
+
+const LivingDurationIntentHandler = {
+    canHandle(handlerInput) {
+        return (
+            Alexa.getRequestType(handlerInput.requestEnvelope) ===
+                "IntentRequest" &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) ===
+                "LivingDurationIntent"
+        );
+    },
+    handle(handlerInput) {
+        const currentDate = new Date();
+        const whichYear = currentDate.getFullYear();
+        let dayDiff =
+            Math.abs(currentDate - moveInDate) / (1000 * 60 * 60 * 24);
+        let dateDiff = 0;
+        let mt1 = parseInt(Math.floor(dayDiff / 30), 10);
+        let monthOrMonths = "";
+        let yr1 = 0;
+        let yearBool = false;
+        let emit1 = "";
+        let emit2 = "";
+        let isLeapYear = determineLeapYear(whichYear);
+        const monthCount = isLeapYear
+            ? [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+            : [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        if (mt1 >= 12) {
+            yr1 = parseInt(Math.floor(mt1 / 12), 10);
+            if (mt1 % 12 === 11) {
+                mt1 = 0;
+                yr1 += 1;
+            } else if (mt1 % 12 === 0) {
+                mt1 = mt1 % 12;
+            } else {
+                mt1 = mt1 % 12;
+            }
+            yearBool = true;
+        }
+
+        monthOrMonths = mt1 > 1 ? "months" : "month";
+        dayDiff = Math.floor(dayDiff, 10);
+        const dayOrDays = dayDiff > 1 ? "days" : "day";
+
+        if (currentDate.getDate() > 15) {
+            dateDiff = currentDate.getDate() - 15;
+        } else if (currentDate.getDate() < 15) {
+            var dateCountdown =
+                currentDate.getMonth() > 0
+                    ? monthCount[currentDate.getMonth() - 1]
+                    : 31;
+
+            dateDiff = dateCountdown - 15 + currentDate.getDate();
+        }
+
+        emit2 = `and ${dateDiff} ${dayOrDays}`;
+
+        const yearOrYears = yr1 > 1 ? "years" : "year";
+
+        if (yearBool) {
+            if (mt1 !== 0) {
+                emit1 = `You guys have lived here for ${dayDiff} days. Thats ${yr1} ${yearOrYears}, ${mt1} ${monthOrMonths} ${emit2}!`;
+            } else {
+                emit1 = `You guys have lived here for ${dayDiff} days. Thats ${yr1} ${yearOrYears} ${emit2}!`;
+            }
+        } else {
+            if (mt1 >= 1) {
+                emit1 = `You guys have lived here for ${dayDiff} days. Thats ${mt1} ${monthOrMonths} ${emit2}!`;
+            } else {
+                emit1 = `You guys have lived here for ${dayDiff} days!`;
+            }
+        }
+
+        if (dayDiff == 365) {
+            emit1 = "You guys have lived here for an entire year!!";
+        }
+
+        return (
+            handlerInput.responseBuilder
+                .speak(emit1)
+                //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+                .getResponse()
+        );
+    },
+};
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return (
@@ -134,6 +233,7 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
         HelloWorldIntentHandler,
+        LivingDurationIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
