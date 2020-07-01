@@ -37,6 +37,10 @@
                     ]
                 },
                 {
+                    "name": "StartStoryIntent",
+                    "samples": ["testsample"]
+                },
+                {
                     "name": "AMAZON.NavigateHomeIntent",
                     "samples": []
                 }

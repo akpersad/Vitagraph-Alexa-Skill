@@ -137,6 +137,34 @@ const LivingDurationIntentHandler = {
     },
 };
 
+const getNextStory = {
+    question:
+        "Jeff loves sports. His favorite sports in the Olympics are ice skating and skiing for the Winter Olympics, and basketball and volleyball for the Summer Olympics. What are John's favorite games for the Winter Olympics?",
+    answer: ["skating", "ice skating", "skiing"],
+};
+
+const StoryIntentHandler = {
+    canHandle(handlerInput) {
+        // Conditions to determine the requests
+        const request = handlerInput.requestEnvelope.request;
+        return (
+            request.type === "IntentRequest" &&
+            (request.intent.name === "StartStoryIntent" ||
+                request.intent.name === "AMAZON.StartOverIntent" ||
+                request.intent.name === "AMAZON.YesIntent")
+        );
+    },
+    handle(handlerInput) {
+        // Execute logic for handler
+        const story = getNextStory;
+        const speechOutput = story.question;
+        return handlerInput.responseBuilder
+            .speak(speechOutput)
+            .reprompt(speechOutput)
+            .getResponse();
+    },
+};
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return (
@@ -234,6 +262,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         LaunchRequestHandler,
         HelloWorldIntentHandler,
         LivingDurationIntentHandler,
+        StoryIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
