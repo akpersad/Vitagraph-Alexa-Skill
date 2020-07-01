@@ -2,6 +2,7 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require("ask-sdk-core");
+const axios = require("axios");
 const moveInDate = new Date("July 15, 2020 09:00:00");
 
 const LaunchRequestHandler = {
@@ -137,6 +138,36 @@ const LivingDurationIntentHandler = {
     },
 };
 
+const QuotesIntentHandler = {
+    canHandle(handlerInput) {
+        return (
+            Alexa.getRequestType(handlerInput.requestEnvelope) ===
+                "IntentRequest" &&
+            Alexa.getIntentName(handlerInput.requestEnvelope) === "QuotesIntent"
+        );
+    },
+    handle(handlerInput) {
+        let speakOutput = "Hello World!";
+
+        const url = "https://quotes.rest/qod";
+        axios
+            .get(url)
+            .then((results) => {
+                speakOutput = results.data.contents.quotes[0].quote;
+
+                return (
+                    handlerInput.responseBuilder
+                        .speak(speakOutput)
+                        //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+                        .getResponse()
+                );
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    },
+};
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return (
@@ -234,6 +265,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         LaunchRequestHandler,
         HelloWorldIntentHandler,
         LivingDurationIntentHandler,
+        QuotesIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,

@@ -37,6 +37,10 @@
                     ]
                 },
                 {
+                    "name": "QuotesIntent",
+                    "samples": ["daily quote", "quote", "what is today's quote"]
+                },
+                {
                     "name": "AMAZON.NavigateHomeIntent",
                     "samples": []
                 }
