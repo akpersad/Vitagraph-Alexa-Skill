@@ -41,13 +41,13 @@
                     "slots": [],
                     "samples": [
                         "give me a challenge",
-                        "tell me a story",
-                        "start story",
-                        "improve my memory"
+                        "quiz me on doctor whoo",
+                        "start the quiz",
+                        "doctor who"
                     ]
                 },
                 {
-                    "name": "StoryAnswerIntent",
+                    "name": "AnswerIntent",
                     "slots": [
                         {
                             "name": "answer",
