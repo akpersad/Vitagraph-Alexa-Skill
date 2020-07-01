@@ -47,7 +47,7 @@
                     ]
                 },
                 {
-                    "name": "AnswerIntent",
+                    "name": "StoryAnswerIntent",
                     "slots": [
                         {
                             "name": "answer",
