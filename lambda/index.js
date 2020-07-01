@@ -137,15 +137,92 @@ const LivingDurationIntentHandler = {
     },
 };
 
-const getNextStory = {
-    question:
-        "Jeff loves sports. His favorite sports in the Olympics are ice skating and skiing for the Winter Olympics, and basketball and volleyball for the Summer Olympics. What are John's favorite games for the Winter Olympics?",
-    answer: ["skating", "ice skating", "skiing"],
+const getNextStory = (handlerInput) => {
+    const attributes = handlerInput.attributesManager.getSessionAttributes();
+    var storiesDeck = [];
+
+    if (!attributes.counter) {
+        //skill launched for first time - no counter set
+        storiesDeck = shuffle(stories);
+        attributes.storiesDeck = storiesDeck;
+        attributes.counter = 0;
+        attributes.correctCount = 0;
+        attributes.wrongCount = 0;
+    } else {
+        storiesDeck = attributes.storiesDeck;
+    }
+
+    const story = storiesDeck[attributes.counter];
+    attributes.lastQuestion = story;
+    handlerInput.attributesManager.setSessionAttributes(attributes);
+    return story;
 };
+
+const checkAnswer = (handlerInput, answerSlot) => {
+    const attributes = handlerInput.attributesManager.getSessionAttributes();
+    var status = "";
+    var message = "";
+
+    if (attributes.lastQuestion.answer.includes(answerSlot)) {
+        console.log("correct");
+        message = "Yup! " + answerSlot + " is correct. ";
+        attributes.correctCount += 1;
+        status = true;
+    } else {
+        console.log("wrong");
+        message = "Nope! " + answerSlot + " is incorrect. ";
+        attributes.wrongCount += 1;
+        status = false;
+    }
+    attributes.counter += 1;
+    handlerInput.attributesManager.setSessionAttributes(attributes);
+    return { status: status, message: message };
+};
+
+const shuffle = (arr) => {
+    var ctr = arr.length,
+        temp,
+        index;
+    while (ctr > 0) {
+        index = Math.floor(Math.random() * ctr);
+        ctr--;
+        temp = arr[ctr];
+        arr[ctr] = arr[index];
+        arr[index] = temp;
+    }
+    return arr;
+};
+
+const stories = [
+    {
+        question:
+            "Jeff loves sports. His favorite sports in the Olympics are ice skating and skiing for the Winter Olympics, and basketball and volleyball for the Summer Olympics. What are Jeff's favorite games for the Winter Olympics?",
+        answer: ["skating", "ice skating", "skiing"],
+    },
+    {
+        question:
+            "Mike loves sports. His favorite sports in the Olympics are ice skating and skiing for the Winter Olympics, and basketball and volleyball for the Summer Olympics. What are Mike's favorite games for the Winter Olympics?",
+        answer: ["skating", "ice skating", "skiing"],
+    },
+    {
+        question:
+            "While traveling, Samantha likes to take her tooth brush, hair brush, face cream, and hair dryer. What does Samantha like to carry when she travels?",
+        answer: ["tooth brush", "hair brush", "hair dryer", "face cream"],
+    },
+    {
+        question:
+            "John loves sports. His favorite sports in the Olympics are ice skating and skiing for the Winter Olympics, and basketball and volleyball for the Summer Olympics. What are John's favorite games for the Winter Olympics?",
+        answer: ["skating", "ice skating", "skiing"],
+    },
+    {
+        question:
+            "While traveling, Jessica likes to take her tooth brush, hair brush, face cream, and hair dryer. What does Jessica like to carry when she travels?",
+        answer: ["tooth brush", "hair brush", "hair dryer", "face cream"],
+    },
+];
 
 const StoryIntentHandler = {
     canHandle(handlerInput) {
-        // Conditions to determine the requests
         const request = handlerInput.requestEnvelope.request;
         return (
             request.type === "IntentRequest" &&
@@ -155,12 +232,64 @@ const StoryIntentHandler = {
         );
     },
     handle(handlerInput) {
-        // Execute logic for handler
-        const story = getNextStory;
+        const story = getNextStory(handlerInput);
         const speechOutput = story.question;
         return handlerInput.responseBuilder
             .speak(speechOutput)
             .reprompt(speechOutput)
+            .getResponse();
+    },
+};
+
+const AnswerHandler = {
+    canHandle(handlerInput) {
+        const request = handlerInput.requestEnvelope.request;
+        const attributes = handlerInput.attributesManager.getSessionAttributes();
+        return (
+            request.type === "IntentRequest" &&
+            request.intent.name === "AnswerIntent" &&
+            attributes.counter < attributes.storiesDeck.length - 1
+        );
+    },
+    handle(handlerInput) {
+        const attributes = handlerInput.attributesManager.getSessionAttributes();
+        const answerSlot =
+            handlerInput.requestEnvelope.request.intent.slots.answer.value;
+        const result = checkAnswer(handlerInput, answerSlot);
+        const story = getNextStory(handlerInput);
+        const speechOutput = `${result.message}Here's your ${
+            attributes.counter + 1
+        }th question - ${story.question}`;
+        attributes.lastResult = result.message;
+        handlerInput.attributesManager.setSessionAttributes(attributes);
+
+        return handlerInput.responseBuilder
+            .speak(speechOutput)
+            .reprompt(speechOutput)
+            .getResponse();
+    },
+};
+
+const FinalScoreHandler = {
+    canHandle(handlerInput) {
+        const request = handlerInput.requestEnvelope.request;
+        const attributes = handlerInput.attributesManager.getSessionAttributes();
+        return (
+            request.type === "IntentRequest" &&
+            request.intent.name === "AnswerIntent" &&
+            attributes.counter == attributes.storiesDeck.length - 1
+        );
+    },
+    handle(handlerInput) {
+        const attributes = handlerInput.attributesManager.getSessionAttributes();
+        return handlerInput.responseBuilder
+            .speak(
+                attributes.lastResult +
+                    " Thank you for playing Memory Challenge. Your final score is " +
+                    attributes.correctCount +
+                    " out of " +
+                    (attributes.counter + 1)
+            )
             .getResponse();
     },
 };
@@ -263,6 +392,8 @@ exports.handler = Alexa.SkillBuilders.custom()
         HelloWorldIntentHandler,
         LivingDurationIntentHandler,
         StoryIntentHandler,
+        AnswerHandler,
+        FinalScoreHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,

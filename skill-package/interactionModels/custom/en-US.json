@@ -38,14 +38,89 @@
                 },
                 {
                     "name": "StartStoryIntent",
-                    "samples": ["testsample"]
+                    "slots": [],
+                    "samples": [
+                        "give me a challenge",
+                        "tell me a story",
+                        "start story",
+                        "improve my memory"
+                    ]
+                },
+                {
+                    "name": "AnswerIntent",
+                    "slots": [
+                        {
+                            "name": "answer",
+                            "type": "ANSWER_SLOT"
+                        }
+                    ],
+                    "samples": [
+                        "is it {answer}",
+                        "{answer}",
+                        "{answer} and {answer}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.YesIntent",
+                    "samples": []
                 },
                 {
                     "name": "AMAZON.NavigateHomeIntent",
                     "samples": []
                 }
             ],
-            "types": []
+            "types": [
+                {
+                    "name": "ANSWER_SLOT",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "face cream"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "hair dryer"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "hair brush"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "tooth brush"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "volleyball"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "basket ball"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "hockey"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "ice skating"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "skiing"
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     }
 }
