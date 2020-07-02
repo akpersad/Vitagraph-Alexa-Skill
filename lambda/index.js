@@ -630,7 +630,7 @@ const TrainDepartureIntentHandler = {
                   }`
                 : time3;
 
-        const speechOut = `The next three M trains are at ${time1}${time1DayZone}, ${time2}${time2DayZone}, and ${time3}${time3DayZone}.`;
+        const speechOut = `The next three Q trains are at ${time1}${time1DayZone}, ${time2}${time2DayZone}, and ${time3}${time3DayZone}.`;
 
         return handlerInput.responseBuilder.speak(speechOut).getResponse();
     },
