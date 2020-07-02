@@ -595,17 +595,44 @@ const TrainDepartureIntentHandler = {
         const currentDate = new Date();
         const nyConvert = currentDate.toLocaleString("en-US", {
             timeZone: "America/New_York",
+            hour12: false,
         });
-        let str = nyConvert.split(", ")[1].slice(0, -6);
+        let str = nyConvert.split(", ")[1].slice(0, -3);
         str = str.split("")[1] === ":" ? `0${str}` : str;
 
         const indx = checkNum(str);
 
-        const time1 = timeTable[indx];
-        // const time2 = time1 + 1;
-        // const time3 = time1 + 2;
+        let time1 = timeTable[indx];
+        const time1DayZone =
+            parseInt(time1.split(":")[0], 10) >= 12 ? "PM" : "AM";
+        time1 =
+            parseInt(time1.split(":")[0], 10) >= 13
+                ? `${parseInt(time1.split(":")[0], 10) - 12}:${
+                      time1.split(":")[1]
+                  }`
+                : time1;
+        let time2 = timeTable[indx + 1];
+        const time2DayZone =
+            parseInt(time2.split(":")[0], 10) >= 12 ? "PM" : "AM";
+        time2 =
+            parseInt(time2.split(":")[0], 10) >= 13
+                ? `${parseInt(time2.split(":")[0], 10) - 12}:${
+                      time2.split(":")[1]
+                  }`
+                : time2;
+        let time3 = timeTable[indx + 2];
+        const time3DayZone =
+            parseInt(time3.split(":")[0], 10) >= 12 ? "PM" : "AM";
+        time3 =
+            parseInt(time3.split(":")[0], 10) >= 13
+                ? `${parseInt(time3.split(":")[0], 10) - 12}:${
+                      time3.split(":")[1]
+                  }`
+                : time3;
 
-        return handlerInput.responseBuilder.speak(time1).getResponse();
+        const speechOut = `The next three M trains are at ${time1}${time1DayZone}, ${time2}${time2DayZone}, and ${time3}${time3DayZone}.`;
+
+        return handlerInput.responseBuilder.speak(speechOut).getResponse();
     },
 };
 
