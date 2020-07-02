@@ -491,15 +491,11 @@ const checkNum = (time) => {
             // move up 1
             if (timeArr[3] === "5") {
                 // move up by 10
-                if (timeArr[1] === "23") {
+                if (timeArr[0] === "2" && timeArr[1] === "3") {
                     //move up by a day
                     time = "00:00";
                 } else {
                     timeArr[1] = parseInt(timeArr[1], 10) + 1;
-                    timeArr[1] =
-                        timeArr[1].toString().length === 1
-                            ? `0${timeArr[1].toString()}`
-                            : timeArr[1].toString();
                     timeArr[3] = 0;
                     timeArr[4] = 0;
                     time = timeArr.join("");
@@ -597,15 +593,11 @@ const TrainDepartureIntentHandler = {
     },
     handle(handlerInput) {
         const currentDate = new Date();
-        const curHour =
-            currentDate.getHours().toString().length === 1
-                ? `0${currentDate.getHours().toString()}`
-                : currentDate.getHours().toString();
-        const curMin =
-            currentDate.getMinutes().toString().length === 1
-                ? `0${currentDate.getMinutes().toString()}`
-                : currentDate.getMinutes().toString();
-        const str = `${curHour}:${curMin}`;
+        const nyConvert = currentDate.toLocaleString("en-US", {
+            timeZone: "America/New_York",
+        });
+        let str = nyConvert.split(", ")[1].slice(0, -6);
+        str = str.split("")[1] === ":" ? `0${str}` : str;
 
         const indx = checkNum(str);
 
