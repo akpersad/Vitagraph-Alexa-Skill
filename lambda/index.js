@@ -601,8 +601,11 @@ const TrainDepartureIntentHandler = {
         str = str.split("")[1] === ":" ? `0${str}` : str;
 
         const indx = checkNum(str);
+        let counter = 0;
 
-        let time1 = timeTable[indx];
+        counter = str === timeTable[indx] ? 1 : 0;
+
+        let time1 = timeTable[indx + counter];
         const time1DayZone =
             parseInt(time1.split(":")[0], 10) >= 12 ? "PM" : "AM";
         time1 =
@@ -611,7 +614,7 @@ const TrainDepartureIntentHandler = {
                       time1.split(":")[1]
                   }`
                 : time1;
-        let time2 = timeTable[indx + 1];
+        let time2 = timeTable[indx + counter + 1];
         const time2DayZone =
             parseInt(time2.split(":")[0], 10) >= 12 ? "PM" : "AM";
         time2 =
@@ -620,7 +623,7 @@ const TrainDepartureIntentHandler = {
                       time2.split(":")[1]
                   }`
                 : time2;
-        let time3 = timeTable[indx + 2];
+        let time3 = timeTable[indx + counter + 2];
         const time3DayZone =
             parseInt(time3.split(":")[0], 10) >= 12 ? "PM" : "AM";
         time3 =
