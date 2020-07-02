@@ -163,7 +163,7 @@ const checkAnswer = (handlerInput, answerSlot) => {
     var status = "";
     var message = "";
 
-    if (attributes.lastQuestion.answer.includes(answerSlot)) {
+    if (attributes.lastQuestion.answer.includes(answerSlot.toLowerCase())) {
         console.log("correct");
         message = "Yup! " + answerSlot + " is correct. ";
         attributes.correctCount += 1;
@@ -195,29 +195,24 @@ const shuffle = (arr) => {
 
 const stories = [
     {
-        question:
-            "Jeff loves sports. His favorite sports in the Olympics are ice skating and skiing for the Winter Olympics, and basketball and volleyball for the Summer Olympics. What are Jeff's favorite games for the Winter Olympics?",
-        answer: ["skating", "ice skating", "skiing"],
+        question: "Who played the 9th Doctor?",
+        answer: ["christopher eccleston", "andrew"],
     },
     {
-        question:
-            "Mike loves sports. His favorite sports in the Olympics are ice skating and skiing for the Winter Olympics, and basketball and volleyball for the Summer Olympics. What are Mike's favorite games for the Winter Olympics?",
-        answer: ["skating", "ice skating", "skiing"],
+        question: "Who played the 10th Doctor?",
+        answer: ["david tennant", "andrew"],
     },
     {
-        question:
-            "While traveling, Samantha likes to take her tooth brush, hair brush, face cream, and hair dryer. What does Samantha like to carry when she travels?",
-        answer: ["tooth brush", "hair brush", "hair dryer", "face cream"],
+        question: "Who played the 11th Doctor?",
+        answer: ["matt smith", "andrew"],
     },
     {
-        question:
-            "John loves sports. His favorite sports in the Olympics are ice skating and skiing for the Winter Olympics, and basketball and volleyball for the Summer Olympics. What are John's favorite games for the Winter Olympics?",
-        answer: ["skating", "ice skating", "skiing"],
+        question: "Who played the 12th Doctor?",
+        answer: ["peter capaldi", "andrew"],
     },
     {
-        question:
-            "While traveling, Jessica likes to take her tooth brush, hair brush, face cream, and hair dryer. What does Jessica like to carry when she travels?",
-        answer: ["tooth brush", "hair brush", "hair dryer", "face cream"],
+        question: "Who played the 13th Doctor?",
+        answer: ["jodie whittaker", "andrew"],
     },
 ];
 
@@ -247,7 +242,7 @@ const AnswerHandler = {
         const attributes = handlerInput.attributesManager.getSessionAttributes();
         return (
             request.type === "IntentRequest" &&
-            request.intent.name === "StoryAnswerIntent" &&
+            request.intent.name === "AnswerIntent" &&
             attributes.counter < attributes.storiesDeck.length - 1
         );
     },
@@ -276,7 +271,7 @@ const FinalScoreHandler = {
         const attributes = handlerInput.attributesManager.getSessionAttributes();
         return (
             request.type === "IntentRequest" &&
-            request.intent.name === "StoryAnswerIntent" &&
+            request.intent.name === "AnswerIntent" &&
             attributes.counter == attributes.storiesDeck.length - 1
         );
     },
@@ -285,7 +280,7 @@ const FinalScoreHandler = {
         const answerSlot =
             handlerInput.requestEnvelope.request.intent.slots.answer.value;
         checkAnswer(handlerInput, answerSlot);
-        const speechOutput = `${attributes.lastResult} Thank you for playing Memory Challenge. Your final score is ${attributes.correctCount} out of ${attributes.counter}`;
+        const speechOutput = `${attributes.lastResult} Thank you for playing the Doctor Who Challenge! Your final score is ${attributes.correctCount} out of ${attributes.counter}`;
         return handlerInput.responseBuilder.speak(speechOutput).getResponse();
     },
 };
