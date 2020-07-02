@@ -163,7 +163,7 @@ const checkAnswer = (handlerInput, answerSlot) => {
     var status = "";
     var message = "";
 
-    if (attributes.lastQuestion.answer.includes(answerSlot)) {
+    if (attributes.lastQuestion.answer.includes(answerSlot.toLowerCase())) {
         console.log("correct");
         message = "Yup! " + answerSlot + " is correct. ";
         attributes.correctCount += 1;
@@ -280,7 +280,7 @@ const FinalScoreHandler = {
         const answerSlot =
             handlerInput.requestEnvelope.request.intent.slots.answer.value;
         checkAnswer(handlerInput, answerSlot);
-        const speechOutput = `${attributes.lastResult} Thank you for playing Memory Challenge. Your final score is ${attributes.correctCount} out of ${attributes.counter}`;
+        const speechOutput = `${attributes.lastResult} Thank you for playing the Doctor Who Challenge! Your final score is ${attributes.correctCount} out of ${attributes.counter}`;
         return handlerInput.responseBuilder.speak(speechOutput).getResponse();
     },
 };
