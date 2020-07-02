@@ -137,6 +137,154 @@ const LivingDurationIntentHandler = {
     },
 };
 
+const getNextStory = (handlerInput) => {
+    const attributes = handlerInput.attributesManager.getSessionAttributes();
+    var storiesDeck = [];
+
+    if (!attributes.counter) {
+        //skill launched for first time - no counter set
+        storiesDeck = shuffle(stories);
+        attributes.storiesDeck = storiesDeck;
+        attributes.counter = 0;
+        attributes.correctCount = 0;
+        attributes.wrongCount = 0;
+    } else {
+        storiesDeck = attributes.storiesDeck;
+    }
+
+    const story = storiesDeck[attributes.counter];
+    attributes.lastQuestion = story;
+    handlerInput.attributesManager.setSessionAttributes(attributes);
+    return story;
+};
+
+const checkAnswer = (handlerInput, answerSlot) => {
+    const attributes = handlerInput.attributesManager.getSessionAttributes();
+    var status = "";
+    var message = "";
+
+    if (attributes.lastQuestion.answer.includes(answerSlot.toLowerCase())) {
+        console.log("correct");
+        message = "Yup! " + answerSlot + " is correct. ";
+        attributes.correctCount += 1;
+        status = true;
+    } else {
+        console.log("wrong");
+        message = "Nope! " + answerSlot + " is incorrect. ";
+        attributes.wrongCount += 1;
+        status = false;
+    }
+    attributes.counter += 1;
+    handlerInput.attributesManager.setSessionAttributes(attributes);
+    return { status: status, message: message };
+};
+
+const shuffle = (arr) => {
+    var ctr = arr.length,
+        temp,
+        index;
+    while (ctr > 0) {
+        index = Math.floor(Math.random() * ctr);
+        ctr--;
+        temp = arr[ctr];
+        arr[ctr] = arr[index];
+        arr[index] = temp;
+    }
+    return arr;
+};
+
+const stories = [
+    {
+        question: "Who played the 9th Doctor?",
+        answer: ["christopher eccleston", "andrew"],
+    },
+    {
+        question: "Who played the 10th Doctor?",
+        answer: ["david tennant", "andrew"],
+    },
+    {
+        question: "Who played the 11th Doctor?",
+        answer: ["matt smith", "andrew"],
+    },
+    {
+        question: "Who played the 12th Doctor?",
+        answer: ["peter capaldi", "andrew"],
+    },
+    {
+        question: "Who played the 13th Doctor?",
+        answer: ["jodie whittaker", "andrew"],
+    },
+];
+
+const StoryIntentHandler = {
+    canHandle(handlerInput) {
+        const request = handlerInput.requestEnvelope.request;
+        return (
+            request.type === "IntentRequest" &&
+            (request.intent.name === "StartStoryIntent" ||
+                request.intent.name === "AMAZON.StartOverIntent" ||
+                request.intent.name === "AMAZON.YesIntent")
+        );
+    },
+    handle(handlerInput) {
+        const story = getNextStory(handlerInput);
+        const speechOutput = story.question;
+        return handlerInput.responseBuilder
+            .speak(speechOutput)
+            .reprompt(speechOutput)
+            .getResponse();
+    },
+};
+
+const AnswerHandler = {
+    canHandle(handlerInput) {
+        const request = handlerInput.requestEnvelope.request;
+        const attributes = handlerInput.attributesManager.getSessionAttributes();
+        return (
+            request.type === "IntentRequest" &&
+            request.intent.name === "AnswerIntent" &&
+            attributes.counter < attributes.storiesDeck.length - 1
+        );
+    },
+    handle(handlerInput) {
+        const attributes = handlerInput.attributesManager.getSessionAttributes();
+        const answerSlot =
+            handlerInput.requestEnvelope.request.intent.slots.answer.value;
+        const result = checkAnswer(handlerInput, answerSlot);
+        const story = getNextStory(handlerInput);
+        const speechOutput = `${result.message}Here's your ${
+            attributes.counter + 1
+        }th question - ${story.question}`;
+        attributes.lastResult = result.message;
+        handlerInput.attributesManager.setSessionAttributes(attributes);
+
+        return handlerInput.responseBuilder
+            .speak(speechOutput)
+            .reprompt(speechOutput)
+            .getResponse();
+    },
+};
+
+const FinalScoreHandler = {
+    canHandle(handlerInput) {
+        const request = handlerInput.requestEnvelope.request;
+        const attributes = handlerInput.attributesManager.getSessionAttributes();
+        return (
+            request.type === "IntentRequest" &&
+            request.intent.name === "AnswerIntent" &&
+            attributes.counter == attributes.storiesDeck.length - 1
+        );
+    },
+    handle(handlerInput) {
+        const attributes = handlerInput.attributesManager.getSessionAttributes();
+        const answerSlot =
+            handlerInput.requestEnvelope.request.intent.slots.answer.value;
+        checkAnswer(handlerInput, answerSlot);
+        const speechOutput = `${attributes.lastResult} Thank you for playing the Doctor Who Challenge! Your final score is ${attributes.correctCount} out of ${attributes.counter}`;
+        return handlerInput.responseBuilder.speak(speechOutput).getResponse();
+    },
+};
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return (
@@ -234,6 +382,9 @@ exports.handler = Alexa.SkillBuilders.custom()
         LaunchRequestHandler,
         HelloWorldIntentHandler,
         LivingDurationIntentHandler,
+        StoryIntentHandler,
+        AnswerHandler,
+        FinalScoreHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
