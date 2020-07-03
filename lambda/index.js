@@ -8,6 +8,7 @@ const {
     getNextStory,
     checkAnswer,
     checkNum,
+    getHttp,
 } = require("./functions");
 const moveInDate = new Date("July 15, 2020 09:00:00");
 
@@ -258,6 +259,39 @@ const TrainDepartureIntentHandler = {
     },
 };
 
+const DirectionsIntentHandler = {
+    canHandle(handlerInput) {
+        return (
+            handlerInput.requestEnvelope.request.type === "IntentRequest" &&
+            handlerInput.requestEnvelope.request.intent.name ===
+                "DirectionsIntent"
+        );
+    },
+
+    async handle(handlerInput) {
+        const destination =
+            handlerInput.requestEnvelope.request.intent.slots.destination.value;
+
+        try {
+            let response = await getHttp(destination);
+            response = JSON.parse(response);
+            const time = response.routes[0].legs[0].duration_in_traffic
+                ? response.routes[0].legs[0].duration_in_traffic.text
+                : response.routes[0].legs[0].duration.text;
+
+            const speechOutput = `If you leave right now, it'll take about ${time}.`;
+
+            handlerInput.responseBuilder.speak(speechOutput);
+        } catch (error) {
+            handlerInput.responseBuilder.speak(
+                `I wasn't able to find a fact for ${destination}`
+            );
+        }
+
+        return handlerInput.responseBuilder.getResponse();
+    },
+};
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return (
@@ -360,6 +394,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         AnswerHandler,
         FinalScoreHandler,
         TrainDepartureIntentHandler,
+        DirectionsIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,

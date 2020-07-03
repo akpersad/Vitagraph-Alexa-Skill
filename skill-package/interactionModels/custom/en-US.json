@@ -61,6 +61,21 @@
                     ]
                 },
                 {
+                    "name": "DirectionsIntent",
+                    "slots": [
+                        {
+                            "name": "destination",
+                            "type": "DIRECTIONS_SLOTS"
+                        }
+                    ],
+                    "samples": [
+                        "how bad is the traffic to {destination}",
+                        "how is the drive to {destination}",
+                        "how long will it take to get to {destination}",
+                        "how long will it take to get to the {destination}"
+                    ]
+                },
+                {
                     "name": "TrainDepartureIntent",
                     "samples": [
                         "when is the next train",
@@ -109,6 +124,31 @@
                         {
                             "name": {
                                 "value": "Jodie whittaker"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DIRECTIONS_SLOTS",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "parents"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "bronx"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "posse"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "deloitte"
                             }
                         }
                     ]

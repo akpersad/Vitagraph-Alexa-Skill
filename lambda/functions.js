@@ -1,4 +1,7 @@
+const https = require("https");
 const { stories, timeTable } = require("./objects");
+const keyAPI = process.env.G_API_KEY;
+const mapURL = new URL("https://maps.googleapis.com/maps/api/directions/json?");
 
 const determineLeapYear = (whichYear) => {
     if (whichYear % 4 !== 0) {
@@ -100,4 +103,83 @@ const checkNum = (time) => {
     }
 };
 
-module.exports = { determineLeapYear, getNextStory, checkAnswer, checkNum };
+const getHttp = (slot) => {
+    let destinationVal;
+    let modeVal = "driving";
+
+    switch (slot.toLowerCase()) {
+        case "parents":
+            destinationVal = "430+East+4th+Street+Brooklyn+NY+11218";
+            break;
+
+        case "bronx":
+            destinationVal = "2318+Cambreleng+Ave+Bronx+NY+10458";
+            break;
+
+        case "posse":
+            destinationVal = "14+Wall+Street+New+York+NY+10005";
+            modeVal = "subway";
+            break;
+
+        case "deloitte":
+            destinationVal = "330+Hudson+Street+New+York+NY+10013";
+            modeVal = "subway";
+
+        default:
+            destinationVal = "60+Washington+Square+S+New+York+NY+10012";
+            break;
+    }
+
+    const params = {
+        key: keyAPI,
+        origin: "1277+East+14th+Street+Brooklyn+NY+11230",
+        destination: destinationVal,
+        mode: modeVal,
+        departure_time: "now",
+    };
+
+    for (let i = 0; Object.keys(params).length > i; i++) {
+        mapURL.searchParams.set(
+            Object.keys(params)[i],
+            params[Object.keys(params)[i]]
+        );
+    }
+
+    return new Promise((resolve, reject) => {
+        const request = https.get(mapURL.href, (response) => {
+            response.setEncoding("utf8");
+
+            let returnData = "";
+            if (response.statusCode < 200 || response.statusCode >= 300) {
+                return reject(
+                    new Error(
+                        `${response.statusCode}: ${response.req.getHeader(
+                            "host"
+                        )} ${response.req.path}`
+                    )
+                );
+            }
+
+            response.on("data", (chunk) => {
+                returnData += chunk;
+            });
+
+            response.on("end", () => {
+                resolve(returnData);
+            });
+
+            response.on("error", (error) => {
+                reject(error);
+            });
+        });
+        request.end();
+    });
+};
+
+module.exports = {
+    determineLeapYear,
+    getNextStory,
+    checkAnswer,
+    checkNum,
+    getHttp,
+};
