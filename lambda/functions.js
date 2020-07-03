@@ -1,3 +1,4 @@
+const http = require("http");
 const { stories, timeTable } = require("./objects");
 
 const determineLeapYear = (whichYear) => {
@@ -100,4 +101,42 @@ const checkNum = (time) => {
     }
 };
 
-module.exports = { determineLeapYear, getNextStory, checkAnswer, checkNum };
+const getHttp = (url, query) => {
+    return new Promise((resolve, reject) => {
+        const request = http.get(`${url}/${query}`, (response) => {
+            response.setEncoding("utf8");
+
+            let returnData = "";
+            if (response.statusCode < 200 || response.statusCode >= 300) {
+                return reject(
+                    new Error(
+                        `${response.statusCode}: ${response.req.getHeader(
+                            "host"
+                        )} ${response.req.path}`
+                    )
+                );
+            }
+
+            response.on("data", (chunk) => {
+                returnData += chunk;
+            });
+
+            response.on("end", () => {
+                resolve(returnData);
+            });
+
+            response.on("error", (error) => {
+                reject(error);
+            });
+        });
+        request.end();
+    });
+};
+
+module.exports = {
+    determineLeapYear,
+    getNextStory,
+    checkAnswer,
+    checkNum,
+    getHttp,
+};

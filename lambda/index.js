@@ -8,8 +8,10 @@ const {
     getNextStory,
     checkAnswer,
     checkNum,
+    getHttp,
 } = require("./functions");
 const moveInDate = new Date("July 15, 2020 09:00:00");
+const URL = "http://numbersapi.com";
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -258,6 +260,37 @@ const TrainDepartureIntentHandler = {
     },
 };
 
+const GetNumberFactIntentHandler = {
+    canHandle(handlerInput) {
+        return (
+            handlerInput.requestEnvelope.request.type === "IntentRequest" &&
+            handlerInput.requestEnvelope.request.intent.name ===
+                "GetNumberFactIntent"
+        );
+    },
+
+    async handle(handlerInput) {
+        const theNumber =
+            handlerInput.requestEnvelope.request.intent.slots.number.value;
+
+        const repromptOutput = " Would you like another fact?";
+
+        try {
+            const response = await getHttp(URL, theNumber);
+
+            handlerInput.responseBuilder
+                .speak(response + repromptOutput)
+                .reprompt(repromptOutput);
+        } catch (error) {
+            handlerInput.responseBuilder
+                .speak(`I wasn't able to find a fact for ${theNumber}`)
+                .reprompt(repromptOutput);
+        }
+
+        return handlerInput.responseBuilder.getResponse();
+    },
+};
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return (
@@ -360,6 +393,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         AnswerHandler,
         FinalScoreHandler,
         TrainDepartureIntentHandler,
+        GetNumberFactIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
