@@ -29,11 +29,131 @@
                     ]
                 },
                 {
+                    "name": "LivingDurationIntent",
+                    "samples": [
+                        "how long",
+                        "how long have we lived here",
+                        "length of time we've lived here"
+                    ]
+                },
+                {
+                    "name": "StartStoryIntent",
+                    "slots": [],
+                    "samples": [
+                        "give me a challenge",
+                        "quiz me on doctor whoo",
+                        "start the quiz",
+                        "doctor who"
+                    ]
+                },
+                {
+                    "name": "AnswerIntent",
+                    "slots": [
+                        {
+                            "name": "answer",
+                            "type": "ANSWER_SLOT"
+                        }
+                    ],
+                    "samples": [
+                        "is it {answer}",
+                        "{answer}",
+                        "{answer} and {answer}"
+                    ]
+                },
+                {
+                    "name": "DirectionsIntent",
+                    "slots": [
+                        {
+                            "name": "destination",
+                            "type": "DIRECTIONS_SLOTS"
+                        }
+                    ],
+                    "samples": [
+                        "how bad is the traffic to {destination}",
+                        "how is the drive to {destination}",
+                        "how long will it take to get to {destination}",
+                        "how long will it take to get to the {destination}"
+                    ]
+                },
+                {
+                    "name": "TrainDepartureIntent",
+                    "samples": [
+                        "when is the next train",
+                        "next train",
+                        "upcoming trains"
+                    ]
+                },
+                {
+                    "name": "AMAZON.YesIntent",
+                    "samples": []
+                },
+                {
                     "name": "AMAZON.NavigateHomeIntent",
                     "samples": []
                 }
             ],
-            "types": []
+            "types": [
+                {
+                    "name": "ANSWER_SLOT",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "Andrew"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Christopher eccleston"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "David tennant"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Matt smith"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Peter capaldi"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Jodie whittaker"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DIRECTIONS_SLOTS",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "parents"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "bronx"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "posse"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "deloitte"
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     }
 }

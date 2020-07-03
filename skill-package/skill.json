@@ -3,14 +3,14 @@
     "publishingInformation": {
       "locales": {
         "en-US": {
-          "summary": "Sample Short Description",
+          "summary": "Vitagraph Personal Alexa Skill",
           "examplePhrases": [
-            "Alexa open hello world",
-            "hello",
+            "Alexa open vitagraph",
+            "vitagraph",
             "help"
           ],
           "name": "vitagraph",
-          "description": "Sample Full Description"
+          "description": "Vitagraph Personal Alexa Skill"
         }
       },
       "isAvailableWorldwide": true,
