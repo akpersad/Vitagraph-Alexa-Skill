@@ -61,16 +61,18 @@
                     ]
                 },
                 {
-                    "name": "GetNumberFactIntent",
+                    "name": "DirectionsIntent",
                     "slots": [
                         {
-                            "name": "number",
-                            "type": "NUMBER_SLOT"
+                            "name": "destination",
+                            "type": "DIRECTIONS_SLOTS"
                         }
                     ],
                     "samples": [
-                        "tell me a fact about {number}",
-                        "give me a fact about {number}"
+                        "how bad is the traffic to {destination}",
+                        "how is the drive to {destination}",
+                        "how long will it take to get to {destination}",
+                        "how long will it take to get to the {destination}"
                     ]
                 },
                 {
@@ -127,26 +129,26 @@
                     ]
                 },
                 {
-                    "name": "NUMBER_SLOT",
+                    "name": "DIRECTIONS_SLOTS",
                     "values": [
                         {
                             "name": {
-                                "value": "1"
+                                "value": "parents"
                             }
                         },
                         {
                             "name": {
-                                "value": "2"
+                                "value": "bronx"
                             }
                         },
                         {
                             "name": {
-                                "value": "3"
+                                "value": "posse"
                             }
                         },
                         {
                             "name": {
-                                "value": "4"
+                                "value": "deloitte"
                             }
                         }
                     ]

@@ -11,7 +11,6 @@ const {
     getHttp,
 } = require("./functions");
 const moveInDate = new Date("July 15, 2020 09:00:00");
-const URL = "http://numbersapi.com";
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -260,30 +259,32 @@ const TrainDepartureIntentHandler = {
     },
 };
 
-const GetNumberFactIntentHandler = {
+const DirectionsIntentHandler = {
     canHandle(handlerInput) {
         return (
             handlerInput.requestEnvelope.request.type === "IntentRequest" &&
             handlerInput.requestEnvelope.request.intent.name ===
-                "GetNumberFactIntent"
+                "DirectionsIntent"
         );
     },
 
     async handle(handlerInput) {
-        const theNumber =
-            handlerInput.requestEnvelope.request.intent.slots.number.value;
+        const destination =
+            handlerInput.requestEnvelope.request.intent.slots.destination.value;
 
         try {
-            let response = await getHttp();
+            let response = await getHttp(destination);
             response = JSON.parse(response);
             const time = response.routes[0].legs[0].duration_in_traffic
                 ? response.routes[0].legs[0].duration_in_traffic.text
                 : response.routes[0].legs[0].duration.text;
 
-            handlerInput.responseBuilder.speak(time);
+            const speechOutput = `If you leave right now, it'll take about ${time}.`;
+
+            handlerInput.responseBuilder.speak(speechOutput);
         } catch (error) {
             handlerInput.responseBuilder.speak(
-                `I wasn't able to find a fact for ${theNumber}`
+                `I wasn't able to find a fact for ${destination}`
             );
         }
 
@@ -393,7 +394,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         AnswerHandler,
         FinalScoreHandler,
         TrainDepartureIntentHandler,
-        GetNumberFactIntentHandler,
+        DirectionsIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
