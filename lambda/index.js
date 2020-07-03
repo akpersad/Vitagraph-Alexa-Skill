@@ -273,18 +273,18 @@ const GetNumberFactIntentHandler = {
         const theNumber =
             handlerInput.requestEnvelope.request.intent.slots.number.value;
 
-        const repromptOutput = " Would you like another fact?";
-
         try {
-            const response = await getHttp(URL, theNumber);
+            let response = await getHttp();
+            response = JSON.parse(response);
+            const time = response.routes[0].legs[0].duration_in_traffic
+                ? response.routes[0].legs[0].duration_in_traffic.text
+                : response.routes[0].legs[0].duration.text;
 
-            handlerInput.responseBuilder
-                .speak(response + repromptOutput)
-                .reprompt(repromptOutput);
+            handlerInput.responseBuilder.speak(time);
         } catch (error) {
-            handlerInput.responseBuilder
-                .speak(`I wasn't able to find a fact for ${theNumber}`)
-                .reprompt(repromptOutput);
+            handlerInput.responseBuilder.speak(
+                `I wasn't able to find a fact for ${theNumber}`
+            );
         }
 
         return handlerInput.responseBuilder.getResponse();
